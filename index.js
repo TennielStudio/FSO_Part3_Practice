@@ -1,5 +1,7 @@
+require('dotenv').config()
 const express = require('express')
 const app = express()
+const Note = require('./models/note')
 
 let notes = [
     {
@@ -54,7 +56,9 @@ let notes = [
   })
 
   app.get('/api/notes/', (request, response) => {
-    response.json(notes)
+    Note.find({}).then(notes => {
+        response.json(notes)
+    })
   })
 
   app.delete('/api/notes/:id', (request, response) => {
@@ -93,7 +97,7 @@ let notes = [
   
   app.use(unknownEndpoint) // how to put the middleware to use
 
-  const PORT = process.env.PORT || 3001
+  const PORT = process.env.PORT || process.env.PORT
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
   })
