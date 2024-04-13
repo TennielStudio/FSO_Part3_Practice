@@ -77,22 +77,20 @@ let notes = [
   }
   app.post('/api/notes', (request, response) => {
     const body = request.body
-    console.log('body: ', body)
-    if (!body.content) {
+    if (body.content === undefined) {
         return response.status(400).json({
             error: 'content missing'
         })
     }
 
-    const note = {
+    const note = new Note ({
         content: body.content,
-        important: Boolean(body.import) || false, // have to do convert to bool bc it's a string
-        id: generateId()
-    }
-    console.log(note.important)
-    notes = notes.concat(note)
-    console.log(note)
-    response.json(note)
+        important: body.import || false, // have to do convert to bool bc it's a string
+    })
+
+    note.save().then(savedNote => {
+        response.json(savedNote)
+    })
   })
   
   app.use(unknownEndpoint) // how to put the middleware to use
